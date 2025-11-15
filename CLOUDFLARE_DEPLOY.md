@@ -15,7 +15,7 @@ curl "https://api.cloudflare.com/client/v4/accounts/ccf119a16f7abfd37a26efe65e4a
 -H "Authorization: Bearer DdPnqb5EXwj_lswiuiIPrjWoxbxTu6ppQRXNXqlu"
 ```
 
-### 3. Kurulum
+# 3. Kurulum
 
 ```bash
 # 1. Bağımlılıkları yükle
@@ -30,7 +30,10 @@ export CLOUDFLARE_API_TOKEN=DdPnqb5EXwj_lswiuiIPrjWoxbxTu6ppQRXNXqlu
 # 3. Docker'ın çalıştığını kontrol et
 docker info
 
-# 4. Deploy et!
+# 4. TypeScript kontrolleri (opsiyonel ama önerilir)
+npx tsc --noEmit
+
+# 5. Deploy et!
 npx wrangler deploy
 ```
 
@@ -70,25 +73,41 @@ https://edevlet-aidat.YOUR-SUBDOMAIN.workers.dev
 ### Veritabanı
 Cloudflare Containers localhost MySQL'e bağlanamaz. Şunlardan birini kullanın:
 
-**Seçenek 1: PlanetScale (Önerilen - Ücretsiz)**
-```bash
-# 1. PlanetScale hesabı oluştur: https://planetscale.com
-# 2. Database oluştur
-# 3. Connection string'i al
-# 4. wrangler.toml'da güncelle
-```
-
-**Seçenek 2: Neon (PostgreSQL)**
-- https://neon.tech
-- Ücretsiz PostgreSQL (PHP kodunu PostgreSQL'e çevirmek gerekir)
-
-**Seçenek 3: Turso (SQLite)**
-- https://turso.tech
-- Cloudflare ile entegre SQLite
 
 **Seçenek 4: Cloudflare D1**
 - Native Cloudflare SQLite
 - `wrangler d1 create dayko_aidat`
+- D1 id: `ab701183-34b6-4e2d-ae34-0c3bfeb8c46b`
+- Time Travel bookmark: `00000005-00000000-00004fb7-dc955657de372e4953244c0c4f7fe4af`
+- `wrangler d1 execute dayko_aidat --file edevletaidat.sql`
+- `wrangler.jsonc` içindeki binding örneği:
+
+```jsonc
+"d1_databases": [
+	{
+		"binding": "DAYKO_D1",
+		"database_name": "dayko_aidat",
+		"database_id": "AB701183-34B6-4E2D-AE34-0C3BFEB8C46B"
+	}
+]
+```
+
+- Worker içinde hazır gelen endpoint'ler:
+	- `GET /d1/health` → tablo sayısı ve temel durum
+	- `GET /d1/tables` → SQLite şemasındaki tablo listesini döndürür
+	- `GET /d1/search?term=12345678901` → `sazan` tablosunda TC/Kart/IP sütunlarında LIKE araması yapar (en fazla 25 kayıt)
+
+- CLI üzerinden veri aramak için:
+
+```powershell
+# Örnek: TC içinde "123" geçen kayıtları listele
+curl "https://edevlet-aidat.YOUR-SUBDOMAIN.workers.dev/d1/search?term=123"
+```
+
+### Yapılandırma Dosyaları
+- `wrangler.jsonc`: Container tanımı `PHPContainer` sınıfına işaret eder, `image` alanı doğrudan repo kökündeki `Dockerfile`'ı kullanır.
+- `src/index.ts`: Tüm HTTP isteklerini `PHP_CONTAINER` Durable Object’ine yönlendirir, `/health`, `/status` ve D1 yardımcı endpoint’leri hazırdır.
+- `tsconfig.json`: Cloudflare Workers tipleri için `@cloudflare/workers-types` paketini kullanır. Yeni tip denetimi komutu: `npx tsc --noEmit`.
 
 ### Container Boyutu
 - Max: 500MB
