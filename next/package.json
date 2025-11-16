@@ -7,13 +7,17 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "build": "echo 'Netlify build step - no action required'",
+    "build:netlify": "next build && next export",
     "containers:list": "wrangler containers list",
     "containers:images": "wrangler containers images list",
     "db:migrate": "node migrate.js"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.0.28",
-    "pg": "^8.16.3"
+    "next": "^16.0.3",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251115.0",
