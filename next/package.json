@@ -7,7 +7,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "build": "echo 'Netlify build step - no action required'",
-    "build:netlify": "next build && next export",
+    "build:netlify": "next build",
     "containers:list": "wrangler containers list",
     "containers:images": "wrangler containers images list",
     "db:migrate": "node migrate.js"
