@@ -2,52 +2,49 @@
 const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const { getDatabaseUrl, DB_URL_ENV_KEYS } = require('./lib/config');
 
 // D1 (SQLite) SQL'ini PostgreSQL'e dönüştüren basit bir fonksiyon
 function convertToPg(sqliteSql) {
     let pgSql = sqliteSql
-        .replace(/INTEGER PRIMARY KEY AUTOINCREMENT/g, 'SERIAL PRIMARY KEY')
-        .replace(/CREATE TABLE IF NOT EXISTS/g, 'CREATE TABLE IF NOT EXISTS')
-        .replace(/CREATE INDEX IF NOT EXISTS/g, 'CREATE INDEX IF NOT EXISTS')
-        .replace(/TEXT/g, 'TEXT')
-        .replace(/INTEGER/g, 'INTEGER');
+        .replaceAll(/INTEGER PRIMARY KEY AUTOINCREMENT/g, 'SERIAL PRIMARY KEY')
+        .replaceAll(/CREATE TABLE IF NOT EXISTS/g, 'CREATE TABLE IF NOT EXISTS')
+        .replaceAll(/CREATE INDEX IF NOT EXISTS/g, 'CREATE INDEX IF NOT EXISTS')
+        .replaceAll(/TEXT/g, 'TEXT')
+        .replaceAll(/INTEGER/g, 'INTEGER');
 
     // SQLite'a özgü ifadeleri kaldır
-    pgSql = pgSql.replace(/-- D1 Uyumlu SQL Şeması/g, '-- PostgreSQL Uyumlu SQL Şeması');
-    
+    pgSql = pgSql.replaceAll(/-- D1 Uyumlu SQL Şeması/g, '-- PostgreSQL Uyumlu SQL Şeması');
+
     return pgSql;
 }
 
-async function main() {
-    const connectionString = process.env.NEON_DATABASE_URL;
+(async () => {
+    const connectionString = getDatabaseUrl();
     if (!connectionString) {
-        console.error('Hata: NEON_DATABASE_URL ortam değişkeni ayarlanmamış.');
+        console.error(`Hata: ${DB_URL_ENV_KEYS.join(', ')} ortam değişkenlerinden en az biri ayarlanmamış.`);
         process.exit(1);
     }
 
-    const client = new Client({
-        connectionString: connectionString,
-    });
+    const client = new Client({ connectionString });
 
     try {
         await client.connect();
-        console.log('Neon veritabanına başarıyla bağlanıldı.');
+        console.log('Veritabanına başarıyla bağlanıldı.');
 
         const sqlFilePath = path.join(__dirname, 'edevletaidat.sql');
         const sqliteSql = fs.readFileSync(sqlFilePath, 'utf8');
-        
         const pgSql = convertToPg(sqliteSql);
 
         console.log('PostgreSQL\'e dönüştürülmüş SQL çalıştırılıyor...');
-        
+
         // SQL komutlarını tek tek çalıştır
-        const commands = pgSql.split(';').filter(cmd => cmd.trim() !== '');
+        const commands = pgSql.split(';').filter((cmd) => cmd.trim() !== '');
         for (const command of commands) {
             await client.query(command);
         }
 
-        console.log('Veritabanı şeması başarıyla Neon\'a eklendi.');
-
+        console.log('Veritabanı şeması başarıyla oluşturuldu.');
     } catch (err) {
         console.error('Veritabanı göçü sırasında hata oluştu:', err);
         process.exit(1);
@@ -55,6 +52,4 @@ async function main() {
         await client.end();
         console.log('Veritabanı bağlantısı kapatıldı.');
     }
-}
-
-main();
+})();
