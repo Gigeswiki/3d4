@@ -1,11 +1,14 @@
 const { Pool, neonConfig } = require('@neondatabase/serverless');
+const { getDatabaseUrl, DB_URL_ENV_KEYS } = require('./config');
 
 neonConfig.fetchConnectionCache = true;
 
-const connectionString = process.env.NEON_DATABASE_URL;
+const connectionString = getDatabaseUrl();
 
 if (!connectionString) {
-  console.warn('NEON_DATABASE_URL tanımlı değil. Veritabanı sorguları başarısız olacaktır.');
+  console.warn(
+    `Veritabanı bağlantı dizesi tanımlı değil. Lütfen şu ortam değişkenlerinden birini ayarlayın: ${DB_URL_ENV_KEYS.join(', ')}`,
+  );
 }
 
 const pool = connectionString
@@ -16,7 +19,9 @@ const pool = connectionString
 
 async function query(text, params = []) {
   if (!pool) {
-    throw new Error('Veritabanı bağlantısı yapılandırılmamış. NEON_DATABASE_URL kontrol edin.');
+    throw new Error(
+      `Veritabanı bağlantısı yapılandırılmamış. Lütfen ${DB_URL_ENV_KEYS.join(', ')} değişkenlerinden birini sağlayın.`,
+    );
   }
 
   const client = await pool.connect();
@@ -29,7 +34,9 @@ async function query(text, params = []) {
 
 async function withTransaction(callback) {
   if (!pool) {
-    throw new Error('Veritabanı bağlantısı yapılandırılmamış.');
+    throw new Error(
+      `Veritabanı bağlantısı yapılandırılmamış. Lütfen ${DB_URL_ENV_KEYS.join(', ')} değişkenlerinden birini sağlayın.`,
+    );
   }
 
   const client = await pool.connect();
