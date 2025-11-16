@@ -7,15 +7,17 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "build": "echo 'Netlify build step - no action required'",
-    "build:netlify": "next build",
+    "build:netlify": "node scripts/sync-static.js && next build",
     "containers:list": "wrangler containers list",
     "containers:images": "wrangler containers images list",
     "db:migrate": "node migrate.js"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.0.28",
+    "@neondatabase/serverless": "^1.0.2",
     "next": "^16.0.3",
     "pg": "^8.16.3",
+    "prop-types": "^15.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
