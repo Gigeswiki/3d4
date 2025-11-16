@@ -1,22 +1,15 @@
+/* eslint-disable unicorn/prefer-top-level-await */
 // migrate.js
 const { Client } = require('pg');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { getDatabaseUrl, DB_URL_ENV_KEYS } = require('./lib/config');
 
 // D1 (SQLite) SQL'ini PostgreSQL'e dönüştüren basit bir fonksiyon
 function convertToPg(sqliteSql) {
-    let pgSql = sqliteSql
-        .replaceAll(/INTEGER PRIMARY KEY AUTOINCREMENT/g, 'SERIAL PRIMARY KEY')
-        .replaceAll(/CREATE TABLE IF NOT EXISTS/g, 'CREATE TABLE IF NOT EXISTS')
-        .replaceAll(/CREATE INDEX IF NOT EXISTS/g, 'CREATE INDEX IF NOT EXISTS')
-        .replaceAll(/TEXT/g, 'TEXT')
-        .replaceAll(/INTEGER/g, 'INTEGER');
-
-    // SQLite'a özgü ifadeleri kaldır
-    pgSql = pgSql.replaceAll(/-- D1 Uyumlu SQL Şeması/g, '-- PostgreSQL Uyumlu SQL Şeması');
-
-    return pgSql;
+    return sqliteSql
+        .replaceAll('INTEGER PRIMARY KEY AUTOINCREMENT', 'SERIAL PRIMARY KEY')
+        .replaceAll('-- D1 Uyumlu SQL Şeması', '-- PostgreSQL Uyumlu SQL Şeması');
 }
 
 (async () => {

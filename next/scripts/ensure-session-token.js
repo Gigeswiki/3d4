@@ -1,11 +1,12 @@
-/* eslint-disable prefer-top-level-await */
+/* eslint-disable unicorn/prefer-top-level-await */
 const { Client } = require('pg');
 const crypto = require('node:crypto');
+const { getDatabaseUrl, DB_URL_ENV_KEYS } = require('../lib/config');
 
 (async () => {
-  const connectionString = process.env.NEON_DATABASE_URL;
+  const connectionString = getDatabaseUrl();
   if (!connectionString) {
-    console.error('NEON_DATABASE_URL ortam değişkeni ayarlanmamış.');
+    console.error(`Hata: ${DB_URL_ENV_KEYS.join(', ')} ortam değişkenlerinden en az biri ayarlanmamış.`);
     process.exit(1);
   }
 
@@ -13,7 +14,7 @@ const crypto = require('node:crypto');
 
   try {
     await client.connect();
-    console.log('Neon veritabanına bağlanıldı.');
+    console.log('Veritabanına bağlanıldı.');
 
     await client.query('ALTER TABLE IF EXISTS sazan ADD COLUMN IF NOT EXISTS session_token TEXT UNIQUE');
     await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_session_token ON sazan(session_token)');
