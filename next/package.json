@@ -10,7 +10,8 @@
     "build:netlify": "node scripts/sync-static.js && next build",
     "containers:list": "wrangler containers list",
     "containers:images": "wrangler containers images list",
-    "db:migrate": "node migrate.js"
+    "db:migrate": "node migrate.js",
+    "db:ensure-session": "node scripts/ensure-session-token.js"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.0.28",

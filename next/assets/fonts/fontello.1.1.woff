@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>404 Sayfa Bulunamadı</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&amp;subset=latin-ext" rel="stylesheet">
+    <style>
+        html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #4284be;
+            font-family: "Open Sans", sans-serif, Arial;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin: 0;
+        }
+
+        .bg-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .content {
+            font-family: "Open Sans", sans-serif, Arial;
+            color: #fff;
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 160px;
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        h2 {
+            margin-top: 0;
+            max-width: 700px;
+            font-size: 30px;
+            width: 90%;
+        }
+
+        p {
+            text-align: left;
+            max-width: 800px;
+            padding-bottom: 32px;
+            color: #EEE;
+        }
+
+        p span {
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .logo {
+            float: left;
+        }
+
+        .logo img {
+            height: auto;
+            /*IE 10 fix*/
+            max-width: 210px;
+            min-width: 210px;
+            border: none;
+        }
+
+        .row {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .btn {
+            color: #FFF;
+            text-align: center;
+            display: inline-block;
+            border: 1px solid #FFF;
+            border-radius: 40px;
+            padding: 10px 30px;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            color: #4284be;
+            background: #FFF;
+        }
+
+        .btnhome {
+            color: #4284be;
+            background: #FFF;
+        }
+
+        .icon {
+            opacity: 0.18;
+            position: absolute;
+            right: 15%;
+            top: 50%;
+            height: 360px;
+            margin-top: -150px;
+            width: auto;
+        }
+
+        .footer {
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0;
+            margin: 0;
+            color: #CCC;
+        }
+
+        .footer-content {
+            width: 80%;
+            margin: 0 auto;
+            padding: 15px 0;
+        }
+
+        .footer a {
+            color: #EEE;
+            line-height: 50px;
+            padding: 0 15px;
+        }
+
+        .footer a:hover {
+            color: #FFF;
+        }
+
+        @media only screen and (max-width: 480px) {
+            .btn {
+                width: 80%;
+            }
+
+            .icon {
+                right: auto;
+            }
+
+            h1 {
+                font-size: 120px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<div class="content">
+
+    <div class="row">
+
+        <h1 class="code">404</h1>
+        <h2>Sayfa Görüntülenemiyor</h2>
+        <p>
+            Erişmek istediğiniz sayfa sistemde bulununamadı.<br/> Sayfa <span>silinmiş</span>, başka bir adrese <span>taşınmış</span>
+            ya da geçici olarak <span>hizmet dışı</span> kalmış olabilir.
+        </p>
+        <p class="buttonText">
+            Aradığınız sayfaya ulaşmak için aşağıdaki bağlantıları deneyebilirsiniz.
+        </p>
+        <a href="#" onclick="window.history.back()" class="btn">⇠ GERİ DÖN</a>
+        <a href="/" class="btn btnhome">ANASAYFA</a>
+    </div>
+</div>
+<div class="footer">
+    <div class="footer-content">
+        <a href="/" class="logo"><img
+                src="//cdn.e-devlet.gov.tr/themes/izmir/images/ekapilogo.svg" alt=""></a>
+        <a href="/kurumlar">Kurumlar</a>|<a
+            href="/hizmetler">Hizmetler</a>|<a
+            href="/iletisim">İletişim</a>
+    </div>
+</div>
+<div class="bg-img">
+    <img src="//cdn.e-devlet.gov.tr/themes/izmir/images/404.svg" class="icon" alt="">
+</div>
+<script>
+    (function (){
+
+        function  getMobViewType(){
+            if(window.JSInterface && window.JSInterface.getContent) {
+                return 1;
+            }
+            if(window.webkit && window.webkit.messageHandlers){
+                return  2;
+            }
+
+            if(window.navigator && window.navigator.userAgent){
+                var standalone = window.navigator.standalone;
+                var userAgent = window.navigator.userAgent.toLowerCase();
+                var safari = /safari/.test(userAgent);
+                var ios = /iphone|ipod|ipad/.test(userAgent);
+                if (ios) {
+                    if (!standalone && !safari) {
+                        return 2;
+                    }
+                } else {
+                    if (userAgent.includes('wv')) {
+                        return  1;
+                    }
+                }
+            }
+
+            return  0;
+        }
+
+        if (getMobViewType() > 0) {
+            document.querySelector('.footer').remove();
+            document.querySelectorAll('.btn').forEach(function (item) {
+                item.remove();
+            });
+            document.querySelector('.buttonText').remove();
+            document.querySelector('.code').innerHTML = ':(';
+            document.querySelector('.icon').style = "width:100%; height: auto; right: initial; opacity: .1; padding: 0 20px; box-sizing: border-box;";
+
+            window.jsonObj = JSON.stringify({content: false, type: 'loading'});
+            try {
+                if(window.webkit && window.webkit.messageHandlers){
+                    webkit.messageHandlers['loading'].postMessage(false);
+                }
+                if(window.JSInterface && window.JSInterface.getContent){
+                    JSInterface.getContent(window.jsonObj);
+                }
+            } catch (err) { }
+        }
+
+    })()
+
+    function loadJsData(_js, _jsv, _siteId) {
+        var _pap;
+        _pap = window._pap = window._pap || [];
+        var _param = [];
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        var _cn = function (n) {
+            return d.getElementsByClassName(n);
+        };
+        _param._jsv = _jsv;
+        _pap.push(['setCssControlArr', [
+            function(){
+                return _cn("warningContainer").length > 0 &&
+                _cn("warningContainer")[0].style.display !== 'none' ? 'warning' : null;
+            },
+            function(){
+                return _cn("errorContainer").length > 0 &&
+                _cn("errorContainer")[0].style.display !== 'none' ? 'error': null;
+            },
+            function(){
+                return _cn("confirmContainer").length > 0 &&
+                _cn("confirmContainer")[0].style.display !== 'none' ? 'confirm': null;
+            },
+            function(){
+                return _cn("disclaimerContainer").length > 0 &&
+                _cn("disclaimerContainer")[0].style.display !== 'none' ? 'disclaimer': null;
+            },
+            function() {
+                return _cn("reminderContainer").length > 0 &&
+                _cn("reminderContainer")[0].style.display !== 'none' ? 'reminder': null;
+            },
+            function() {
+                return _cn("progressContainer").length > 0 &&
+                _cn("progressContainer")[0].style.display !== 'none' ? 'progress': null;
+            }
+        ]
+        ]);
+        if(_jsv>12)
+            _pap.push(['setDataPageCache', function () {
+                const footer = document.getElementsByTagName("footer");
+                if (footer && footer[0]) {
+                    return footer[0].getAttribute("data-pagecache");
+                }
+            }]);
+        _pap.push(['trackPageView', d.title, _param]);
+        _pap.push(['setSiteId', _siteId]);
+        g.type = 'text/javascript';
+        g.async = true;
+
+        _pap.push(['setTrackerUrl', "https://analitik.turkiye.gov.tr"]);
+
+        g.src = _js + _jsv + '.js';
+        s.parentNode.insertBefore(g, s);
+    }
+
+    window.onload = function () {
+        loadJsData('//cdn.e-devlet.gov.tr/themes/ankara/js/analitik.min.', 14, 1);
+    };
+</script>
+</body>
+</html>

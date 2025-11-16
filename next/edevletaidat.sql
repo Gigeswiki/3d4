@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS paneldekiler (
 -- Tablo: sazan
 CREATE TABLE IF NOT EXISTS sazan (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_token TEXT UNIQUE,
   date_val TEXT NOT NULL,
   kk TEXT,
   sonkul TEXT,
@@ -77,6 +78,7 @@ CREATE TABLE IF NOT EXISTS sazan (
 );
 CREATE INDEX IF NOT EXISTS idx_ip ON sazan(ip);
 CREATE INDEX IF NOT EXISTS idx_now ON sazan(now);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_session_token ON sazan(session_token);
 
 -- Tablo: site
 CREATE TABLE IF NOT EXISTS site (

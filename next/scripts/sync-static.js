@@ -50,6 +50,7 @@ function syncPair(srcRelative, destRelative) {
 try {
   syncPair('assets', path.join('public', 'assets'));
   syncPair(path.join('admin', 'assets'), path.join('public', 'admin'));
+  syncPair('themes', path.join('public', 'themes'));
   console.log('Statik assetler senkronize edildi.');
 } catch (error) {
   console.error('Statik assetleri kopyalarken hata oluştu:', error);
